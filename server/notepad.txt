@@ -1,0 +1,56 @@
+geminiService.js changed : 
+const prompt = `
+        Follow my prompt seriously
+        Generate a JavaScript coding challenge with difficulty as one of: "easy", "medium", or "hard".
+        Return **only valid JSON**, using this schema:
+
+        {
+          "title": "string",
+          "description": "string",
+          "difficulty": "easy" | "medium" | "hard",
+          "starterCode": "string",
+          "testCases": [
+            {
+              "input": "string",
+              "expectedOutput": "string"
+            }
+          ]
+        }
+        Return ONLY a valid JSON object with NO extra text or explanation.
+
+        The "difficulty" value must be one of exactly: "easy", "medium", or "hard". 
+        DO NOT use "beginner", "expert", "advance", etc. Only use the valid enum values.
+
+        ⚠ Do not use values like "beginner" or "advanced".
+        ⚠ No extra commentary. No markdown. Only the pure JSON.
+        `;
+
+        to other 
+time: 14:40;
+
+
+make change challengeConroller :
+
+before : const generateChallengeController = async (req, res) => {
+  try {
+    const { skillLevel } = req.body;
+
+    // Generate challenge via Gemini AI
+    const aiResponse = await generateChallenge(skillLevel);
+
+    const newChallenge = new Challenge({
+      title: aiResponse.title,
+      description: aiResponse.description,
+      difficulty: skillLevel,
+      starterCode: aiResponse.starterCode || '',
+      testCases: aiResponse.testCases || [],
+      generatedByAI: true,
+    });
+
+    await newChallenge.save();
+    res.status(201).json(newChallenge);
+  } catch (err) {
+    console.error('❌ Error generating challenge:', err);
+    res.status(500).json({ message: 'AI Challenge generation failed' });
+  }
+};
