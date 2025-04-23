@@ -169,7 +169,9 @@ const Challenge = () => {
     try {
       const token = getToken();
       const decoded = jwtDecode(token);
-      const userId = decoded.userId;
+      console.log(decoded);
+      const userId = decoded.id;
+      console.log(userId);
       const res = await axios.post(`${API_BASE}/submissions/submit`, {
         challengeId: challenge._id,
         questionId: currentQuestion._id,

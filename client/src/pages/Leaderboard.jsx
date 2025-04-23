@@ -47,8 +47,8 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/leaderboard/${id}`);
-        console.log(res);
-        setData(res.data.submissions || []);
+        console.log(res.data);  
+        setData(res.data || []);
         setChallengeTitle(res.data.title || "Challenge Leaderboard");
       } catch (err) {
         console.error('Error fetching leaderboard:', err);
@@ -81,11 +81,12 @@ const Leaderboard = () => {
             </tr>
           ) : (
             data.map((entry, index) => (
-              <tr key={entry._id}>
-                <Td>{index + 1}</Td>
-                <Td>{entry.userName || 'Anonymous'}</Td>
+              <tr key={index}>
+                <Td>{entry.rank}</Td>
+                <Td>{entry.username || 'Anonymous'}</Td>
                 <Td>{entry.score}</Td>
-                <Td>{new Date(entry.timestamp).toLocaleString()}</Td>
+                {/* <Td>{new Date(entry.timeTaken).toLocaleString()}</Td> */}
+                <Td>{entry.timeTaken} sec</Td>
               </tr>
             ))
           )}
