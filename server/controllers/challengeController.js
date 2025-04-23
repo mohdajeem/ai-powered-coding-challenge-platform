@@ -10,7 +10,7 @@ const getChallenges = async (req, res) => {
     const challenges = await Challenge.find().populate('questions'); // 👈 this is key!
     res.status(200).json(challenges);
   } catch (err) {
-    console.error('❌ Error fetching challenges:', err);
+    console.error('Error fetching challenges:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -25,7 +25,7 @@ const getChallengeById = async (req, res) => {
     }
     res.status(200).json(challenge);
   } catch (err) {
-    console.error('❌ Error fetching challenge by ID:', err);
+    console.error('Error fetching challenge by ID:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
