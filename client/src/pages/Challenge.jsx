@@ -94,7 +94,8 @@ const NavigationButtons = styled.div`
 const Challenge = () => {
   const { id } = useParams();
   const [challenge, setChallenge] = useState(null);
-  const [code, setCode] = useState('// Write your solution here...');
+  const [code, setCode] = useState('');
+  const [perQuestionCode, setPerQuestionCode] = useState({});
   const [output, setOutput] = useState('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -106,6 +107,18 @@ const Challenge = () => {
         const res = await axios.get(`${API_BASE}/challenges/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        const fetchedCode = perQuestionCode[currentQuestionIndex];
+        if (!fetchedCode) {
+          const starterCode = res.data.questions[currentQuestionIndex].starterCode;
+          setPerQuestionCode(prev => ({
+            ...prev,
+            [currentQuestionIndex]: starterCode
+          }));
+          setCode(starterCode);
+        } else {
+          setCode(fetchedCode);
+        }
+
         setChallenge(res.data);
       } catch (err) {
         console.error('Error fetching challenge:', err);
@@ -114,7 +127,13 @@ const Challenge = () => {
     fetchChallenge();
   }, [id, currentQuestionIndex]);
 
-
+  function updateCodeForQuestion(questionIndex, newCode) {
+    setPerQuestionCode(prev => ({
+      ...prev,
+      [questionIndex]: newCode
+    }));
+  }
+  
   const handleRunCode = async () => {
     let results = [];
     console.log("test cases", testCases);
@@ -155,7 +174,7 @@ const Challenge = () => {
         challengeId: challenge._id,
         questionId: currentQuestion._id,
         userId:userId,
-        userCode: code,
+        userCode: perQuestionCode[currentQuestionIndex] || code,
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -227,18 +246,10 @@ const Challenge = () => {
               theme: 'material',
               lineNumbers: true,
             }}
-            // onBeforeChange={(editor, data, value) => {
-            //   console.log("code before change", value);
-            //   setCode(value);
-            // }}
-            // onChange={(editor, data, value) => {
-            //   console.log("Before setCode:", value); // Log before updating the state
-            //   setCode(value);
-            //   console.log("After setCode:", code); // Check if the state is being updated
-            // }}
             extensions={[javascript()]}
             onChange={(value) => {
               console.log(value);
+              updateCodeForQuestion(currentQuestionIndex, value);
               setCode(value);
             }}
           />
