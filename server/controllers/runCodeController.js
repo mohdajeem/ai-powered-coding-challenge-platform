@@ -11,7 +11,6 @@ const runCode = async (req, res) => {
     // Wrap user code with input simulation
     const wrappedCode = `
       const input = \`${testInput}\`;
-      console.log("running user code...");
       ${userCode}
     `;
 
